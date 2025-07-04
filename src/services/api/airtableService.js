@@ -101,11 +101,9 @@ createdTime: record.createdTime || new Date().toISOString()
     return {
       id: record.id,
       fields: record.fields,
-      createdTime: record.createdTime || new Date().toISOString()
+createdTime: record.createdTime || new Date().toISOString()
     }
   }
-}
-}
 }
 
 export default airtableService;
