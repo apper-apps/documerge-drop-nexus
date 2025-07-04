@@ -1,4 +1,6 @@
 import airtableData from "@/services/mockData/airtableData.json";
+import React from "react";
+import Error from "@/components/ui/Error";
 const airtableService = {
   async testConnection(config) {
     await new Promise(resolve => setTimeout(resolve, 500))
@@ -73,13 +75,12 @@ const airtableService = {
       records = records.slice(0, options.maxRecords)
     }
     
-    return records.map(record => ({
+return records.map(record => ({
       id: record.id,
       fields: record.fields,
-createdTime: record.createdTime || new Date().toISOString()
+      createdTime: record.createdTime || new Date().toISOString()
     }))
   },
-
   async getRecord(config, recordId) {
     await new Promise(resolve => setTimeout(resolve, 200))
     
@@ -98,12 +99,12 @@ createdTime: record.createdTime || new Date().toISOString()
       throw new Error('Record not found')
     }
     
-    return {
+return {
       id: record.id,
       fields: record.fields,
-createdTime: record.createdTime || new Date().toISOString()
+      createdTime: record.createdTime || new Date().toISOString()
     }
   }
 }
 
-export default airtableService;
+export { airtableService };
