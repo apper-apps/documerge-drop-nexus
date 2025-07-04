@@ -1,0 +1,211 @@
+{
+  "tables": [
+    {
+      "name": "Invoices",
+      "fields": [
+        {
+          "name": "Customer Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Customer Email",
+          "type": "email"
+        },
+        {
+          "name": "Invoice Number",
+          "type": "number"
+        },
+        {
+          "name": "Invoice Date",
+          "type": "date"
+        },
+        {
+          "name": "Due Date",
+          "type": "date"
+        },
+        {
+          "name": "Total Amount",
+          "type": "currency"
+        },
+        {
+          "name": "Line Items",
+          "type": "multipleRecordLinks"
+        },
+        {
+          "name": "Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Company Logo",
+          "type": "multipleAttachments"
+        }
+      ],
+      "records": [
+        {
+          "id": "rec1A2B3C4D5E6F7",
+          "fields": {
+            "Customer Name": "Acme Corporation",
+            "Customer Email": "billing@acme.com",
+            "Invoice Number": 1001,
+            "Invoice Date": "2024-01-15",
+            "Due Date": "2024-02-15",
+            "Total Amount": 2500.00,
+            "Notes": "Monthly software license fee",
+            "Company Logo": [
+              {
+                "url": "https://example.com/logo.png",
+                "filename": "logo.png"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rec2B3C4D5E6F7G8",
+          "fields": {
+            "Customer Name": "TechStart Inc",
+            "Customer Email": "accounts@techstart.com",
+            "Invoice Number": 1002,
+            "Invoice Date": "2024-01-20",
+            "Due Date": "2024-02-20",
+            "Total Amount": 1800.00,
+            "Notes": "Custom development services",
+            "Company Logo": [
+              {
+                "url": "https://example.com/techstart-logo.png",
+                "filename": "techstart-logo.png"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quotations",
+      "fields": [
+        {
+          "name": "Client Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Client Email",
+          "type": "email"
+        },
+        {
+          "name": "Quote Number",
+          "type": "number"
+        },
+        {
+          "name": "Quote Date",
+          "type": "date"
+        },
+        {
+          "name": "Valid Until",
+          "type": "date"
+        },
+        {
+          "name": "Subtotal",
+          "type": "currency"
+        },
+        {
+          "name": "Tax Amount",
+          "type": "currency"
+        },
+        {
+          "name": "Total",
+          "type": "currency"
+        },
+        {
+          "name": "Status",
+          "type": "singleSelect"
+        }
+      ],
+      "records": [
+        {
+          "id": "recQ1W2E3R4T5Y6U",
+          "fields": {
+            "Client Name": "Global Solutions Ltd",
+            "Client Email": "procurement@global.com",
+            "Quote Number": 2001,
+            "Quote Date": "2024-01-18",
+            "Valid Until": "2024-02-18",
+            "Subtotal": 5000.00,
+            "Tax Amount": 500.00,
+            "Total": 5500.00,
+            "Status": "Pending"
+          }
+        },
+        {
+          "id": "recW2E3R4T5Y6U7I",
+          "fields": {
+            "Client Name": "Innovation Partners",
+            "Client Email": "contact@innovation.com",
+            "Quote Number": 2002,
+            "Quote Date": "2024-01-22",
+            "Valid Until": "2024-02-22",
+            "Subtotal": 3200.00,
+            "Tax Amount": 320.00,
+            "Total": 3520.00,
+            "Status": "Approved"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Contracts",
+      "fields": [
+        {
+          "name": "Party A",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Party B",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Contract Date",
+          "type": "date"
+        },
+        {
+          "name": "Contract Value",
+          "type": "currency"
+        },
+        {
+          "name": "Duration",
+          "type": "number"
+        },
+        {
+          "name": "Status",
+          "type": "singleSelect"
+        },
+        {
+          "name": "Signed Document",
+          "type": "multipleAttachments"
+        }
+      ],
+      "records": [
+        {
+          "id": "recC1X2Z3A4S5D6F7",
+          "fields": {
+            "Party A": "DocuMerge Pro Inc",
+            "Party B": "Enterprise Client Corp",
+            "Contract Date": "2024-01-25",
+            "Contract Value": 50000.00,
+            "Duration": 12,
+            "Status": "Active"
+          }
+        },
+        {
+          "id": "recX2Z3A4S5D6F7G8",
+          "fields": {
+            "Party A": "DocuMerge Pro Inc",
+            "Party B": "Startup Solutions LLC",
+            "Contract Date": "2024-01-28",
+            "Contract Value": 25000.00,
+            "Duration": 6,
+            "Status": "Draft"
+          }
+        }
+      ]
+    }
+  ]
+}

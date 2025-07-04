@@ -1,0 +1,119 @@
+[
+  {
+    "Id": 1,
+    "name": "Invoice Template",
+    "description": "Standard invoice template for customer billing",
+    "airtableConfig": "eyJhcGlLZXkiOiJrZXlfKioqKioqKioqIiwiYmFzZUlkIjoiYXBwWFlaMTIzNDUiLCJ0YWJsZU5hbWUiOiJJbnZvaWNlcyJ9",
+    "googleDocUrl": "https://docs.google.com/document/d/1A2B3C4D5E6F7G8H9I0J/edit",
+    "fieldMappings": [
+      {
+        "docPlaceholder": "{{customer_name}}",
+        "airtableField": "Customer Name",
+        "fieldType": "singleLineText",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{invoice_number}}",
+        "airtableField": "Invoice Number",
+        "fieldType": "number",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{total_amount}}",
+        "airtableField": "Total Amount",
+        "fieldType": "currency",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{line_items}}",
+        "airtableField": "Line Items",
+        "fieldType": "multipleRecordLinks",
+        "isLineItem": true
+      }
+    ],
+    "settings": {
+      "imageWidth": 200,
+      "enableLineItems": true
+    },
+    "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-20T14:45:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Quotation Template",
+    "description": "Professional quotation template for sales proposals",
+    "airtableConfig": "eyJhcGlLZXkiOiJrZXlfKioqKioqKioqIiwiYmFzZUlkIjoiYXBwWFlaMTIzNDUiLCJ0YWJsZU5hbWUiOiJRdW90YXRpb25zIn0=",
+    "googleDocUrl": "https://docs.google.com/document/d/2B3C4D5E6F7G8H9I0J1K/edit",
+    "fieldMappings": [
+      {
+        "docPlaceholder": "{{client_name}}",
+        "airtableField": "Client Name",
+        "fieldType": "singleLineText",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{quote_number}}",
+        "airtableField": "Quote Number",
+        "fieldType": "number",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{quote_date}}",
+        "airtableField": "Quote Date",
+        "fieldType": "date",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{subtotal}}",
+        "airtableField": "Subtotal",
+        "fieldType": "currency",
+        "isLineItem": false
+      }
+    ],
+    "settings": {
+      "imageWidth": 150,
+      "enableLineItems": true
+    },
+    "createdAt": "2024-01-18T09:15:00Z",
+    "updatedAt": "2024-01-22T11:20:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Contract Template",
+    "description": "Legal contract template with client information",
+    "airtableConfig": "eyJhcGlLZXkiOiJrZXlfKioqKioqKioqIiwiYmFzZUlkIjoiYXBwWFlaMTIzNDUiLCJ0YWJsZU5hbWUiOiJDb250cmFjdHMifQ==",
+    "googleDocUrl": "https://docs.google.com/document/d/3C4D5E6F7G8H9I0J1K2L/edit",
+    "fieldMappings": [
+      {
+        "docPlaceholder": "{{party_a}}",
+        "airtableField": "Party A",
+        "fieldType": "singleLineText",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{party_b}}",
+        "airtableField": "Party B",
+        "fieldType": "singleLineText",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{contract_date}}",
+        "airtableField": "Contract Date",
+        "fieldType": "date",
+        "isLineItem": false
+      },
+      {
+        "docPlaceholder": "{{contract_value}}",
+        "airtableField": "Contract Value",
+        "fieldType": "currency",
+        "isLineItem": false
+      }
+    ],
+    "settings": {
+      "imageWidth": 250,
+      "enableLineItems": false
+    },
+    "createdAt": "2024-01-25T16:00:00Z",
+    "updatedAt": "2024-01-28T10:30:00Z"
+  }
+]

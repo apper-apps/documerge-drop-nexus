@@ -1,0 +1,80 @@
+[
+  {
+    "Id": 1,
+    "templateId": 1,
+    "templateName": "Invoice Template",
+    "recordId": "rec1A2B3C4D5E6F7",
+    "status": "completed",
+    "pdfUrl": "https://example.com/generated/invoice-1001.pdf",
+    "filename": "invoice-1001.pdf",
+    "size": 245760,
+    "pages": 1,
+    "createdAt": "2024-01-21T14:30:00Z",
+    "updatedAt": "2024-01-21T14:32:00Z"
+  },
+  {
+    "Id": 2,
+    "templateId": 2,
+    "templateName": "Quotation Template",
+    "recordId": "recQ1W2E3R4T5Y6U",
+    "status": "completed",
+    "pdfUrl": "https://example.com/generated/quote-2001.pdf",
+    "filename": "quote-2001.pdf",
+    "size": 189440,
+    "pages": 2,
+    "createdAt": "2024-01-23T10:15:00Z",
+    "updatedAt": "2024-01-23T10:17:00Z"
+  },
+  {
+    "Id": 3,
+    "templateId": 1,
+    "templateName": "Invoice Template",
+    "recordId": "rec2B3C4D5E6F7G8",
+    "status": "completed",
+    "pdfUrl": "https://example.com/generated/invoice-1002.pdf",
+    "filename": "invoice-1002.pdf",
+    "size": 267520,
+    "pages": 1,
+    "createdAt": "2024-01-24T09:45:00Z",
+    "updatedAt": "2024-01-24T09:47:00Z"
+  },
+  {
+    "Id": 4,
+    "templateId": 3,
+    "templateName": "Contract Template",
+    "recordId": "recC1X2Z3A4S5D6F7",
+    "status": "pending",
+    "pdfUrl": null,
+    "filename": "contract-enterprise.pdf",
+    "size": 0,
+    "pages": 0,
+    "createdAt": "2024-01-29T11:20:00Z",
+    "updatedAt": "2024-01-29T11:20:00Z"
+  },
+  {
+    "Id": 5,
+    "templateId": 2,
+    "templateName": "Quotation Template",
+    "recordId": "recW2E3R4T5Y6U7I",
+    "status": "failed",
+    "pdfUrl": null,
+    "filename": "quote-2002.pdf",
+    "size": 0,
+    "pages": 0,
+    "createdAt": "2024-01-29T15:30:00Z",
+    "updatedAt": "2024-01-29T15:32:00Z"
+  },
+  {
+    "Id": 6,
+    "templateId": 1,
+    "templateName": "Invoice Template",
+    "recordId": "rec1A2B3C4D5E6F7",
+    "status": "completed",
+    "pdfUrl": "https://example.com/generated/invoice-1001-revised.pdf",
+    "filename": "invoice-1001-revised.pdf",
+    "size": 253440,
+    "pages": 1,
+    "createdAt": "2024-01-30T08:15:00Z",
+    "updatedAt": "2024-01-30T08:17:00Z"
+  }
+]
