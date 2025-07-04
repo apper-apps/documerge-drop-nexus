@@ -100,17 +100,25 @@ const TemplateWizard = () => {
     return Object.keys(newErrors).length === 0
   }
   
-  const handleNext = async () => {
+const handleNext = async () => {
     if (!validateStep(currentStep)) return
     
     // Test connection for step 1
     if (currentStep === 1 && !testConnection) {
       try {
         setTestConnection(true)
+        
+        // Validate airtableService has required methods
+        if (!airtableService?.testConnection) {
+          throw new Error('Airtable service not properly initialized')
+        }
+        
         await airtableService.testConnection(templateData.airtableConfig)
         toast.success('Airtable connection successful')
       } catch (err) {
-        toast.error('Failed to connect to Airtable')
+        const errorMessage = err.message || 'Failed to connect to Airtable'
+        toast.error(`Connection Error: ${errorMessage}`)
+        console.error('Airtable connection error:', err)
         setTestConnection(false)
         return
       } finally {
@@ -127,7 +135,6 @@ const TemplateWizard = () => {
       setCurrentStep(currentStep + 1)
     }
   }
-  
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)

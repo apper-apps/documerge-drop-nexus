@@ -1,11 +1,10 @@
-import airtableData from '@/services/mockData/airtableData.json'
-
-export const airtableService = {
+import airtableData from "@/services/mockData/airtableData.json";
+const airtableService = {
   async testConnection(config) {
     await new Promise(resolve => setTimeout(resolve, 500))
     
     // Simulate connection validation
-    if (!config.apiKey || !config.baseId || !config.tableName) {
+    if (!config?.apiKey || !config?.baseId || !config?.tableName) {
       throw new Error('Missing required configuration')
     }
     
@@ -18,29 +17,76 @@ export const airtableService = {
   },
 
   async getFields(config) {
-    await new Promise(resolve => setTimeout(resolve, 400))
+    await new Promise(resolve => setTimeout(resolve, 800))
     
-    const table = airtableData.tables.find(t => t.name === config.tableName)
-    if (!table) {
+    // Validate configuration
+    if (!config?.apiKey || !config?.baseId || !config?.tableName) {
+      throw new Error('Missing required Airtable configuration')
+    }
+    
+    // Simulate API key validation
+    if (config.apiKey.length < 10) {
+      throw new Error('Invalid API key format')
+    }
+    
+    // Simulate table not found error
+    if (config.tableName && !airtableData.tables.find(t => t.name === config.tableName)) {
       throw new Error(`Table "${config.tableName}" not found`)
     }
     
-    return table.fields
+    // Find the table or use the first one
+    const table = airtableData.tables.find(t => t.name === config.tableName) || airtableData.tables[0]
+    
+    if (!table?.fields) {
+      throw new Error('No fields found in table')
+    }
+    
+    // Return fields with proper structure
+    return table.fields.map(field => ({
+      id: field.id || field.name.toLowerCase().replace(/\s+/g, '_'),
+      name: field.name,
+      type: field.type || 'text',
+      description: field.description || '',
+      options: field.options || null
+    }))
   },
 
-  async getRecords(config) {
-    await new Promise(resolve => setTimeout(resolve, 300))
+  async getRecords(config, options = {}) {
+    await new Promise(resolve => setTimeout(resolve, 1000))
     
-    const table = airtableData.tables.find(t => t.name === config.tableName)
-    if (!table) {
-      throw new Error(`Table "${config.tableName}" not found`)
+    // Validate configuration
+    if (!config?.apiKey || !config?.baseId || !config?.tableName) {
+      throw new Error('Missing required Airtable configuration')
     }
     
-    return table.records
+    // Find the table
+    const table = airtableData.tables.find(t => t.name === config.tableName) || airtableData.tables[0]
+    
+    if (!table?.records) {
+      throw new Error('No records found in table')
+    }
+    
+    // Apply basic filtering and limiting
+    let records = table.records
+    
+    if (options.maxRecords) {
+      records = records.slice(0, options.maxRecords)
+    }
+    
+    return records.map(record => ({
+      id: record.id,
+      fields: record.fields,
+createdTime: record.createdTime || new Date().toISOString()
+    }))
   },
 
   async getRecord(config, recordId) {
     await new Promise(resolve => setTimeout(resolve, 200))
+    
+    // Validate configuration
+    if (!config?.apiKey || !config?.baseId || !config?.tableName) {
+      throw new Error('Missing required Airtable configuration')
+    }
     
     const table = airtableData.tables.find(t => t.name === config.tableName)
     if (!table) {
@@ -52,6 +98,14 @@ export const airtableService = {
       throw new Error('Record not found')
     }
     
-    return record
+    return {
+      id: record.id,
+      fields: record.fields,
+      createdTime: record.createdTime || new Date().toISOString()
+    }
   }
 }
+}
+}
+
+export default airtableService;

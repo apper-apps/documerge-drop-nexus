@@ -35,29 +35,57 @@ const FieldMappingPanel = ({
     }
   }, [googleDocUrl])
   
-  const loadAirtableFields = async () => {
+const loadAirtableFields = async () => {
     try {
       setLoading(true)
       setError('')
+      
+      // Validate airtableService has required methods
+      if (!airtableService?.getFields) {
+        throw new Error('Airtable service not properly initialized')
+      }
+      
       const fields = await airtableService.getFields(airtableConfig)
+      
+      // Validate returned data structure
+      if (!Array.isArray(fields)) {
+        throw new Error('Invalid field data received from Airtable')
+      }
+      
       setAirtableFields(fields)
     } catch (err) {
-      setError('Failed to load Airtable fields')
-      toast.error('Failed to connect to Airtable')
+      const errorMessage = err.message || 'Failed to load Airtable fields'
+      setError(errorMessage)
+      toast.error(`Airtable Error: ${errorMessage}`)
+      console.error('Error loading Airtable fields:', err)
     } finally {
       setLoading(false)
     }
   }
   
-  const loadDocPlaceholders = async () => {
+const loadDocPlaceholders = async () => {
     try {
       setLoading(true)
       setError('')
+      
+      // Validate googleDocsService has required methods
+      if (!googleDocsService?.getPlaceholders) {
+        throw new Error('Google Docs service not properly initialized')
+      }
+      
       const placeholders = await googleDocsService.getPlaceholders(googleDocUrl)
+      
+      // Validate returned data structure
+      if (!Array.isArray(placeholders)) {
+        throw new Error('Invalid placeholder data received from Google Docs')
+      }
+      
       setDocPlaceholders(placeholders)
     } catch (err) {
-      setError('Failed to load Google Docs placeholders')
-      toast.error('Failed to parse Google Docs template')
+      const errorMessage = err.message || 'Failed to load Google Docs placeholders'
+      setError(errorMessage)
+      toast.error(`Google Docs Error: ${errorMessage}`)
+      console.error('Error loading Google Docs placeholders:', err)
     } finally {
       setLoading(false)
     }
@@ -77,14 +105,20 @@ const FieldMappingPanel = ({
     onMappingsChange(newMappings)
   }
   
-  const handleAutoMap = () => {
+const handleAutoMap = () => {
+    if (!docPlaceholders?.length || !airtableFields?.length) {
+      toast.error('Cannot auto-map: missing placeholders or fields')
+      return
+    }
+    
     const autoMappings = docPlaceholders.map(placeholder => {
-      const existingMapping = mappings.find(m => m.docPlaceholder === placeholder)
+      const existingMapping = mappings?.find(m => m.docPlaceholder === placeholder)
       if (existingMapping) return existingMapping
       
       // Try to find matching field by name
+      const cleanPlaceholder = placeholder?.toLowerCase().replace(/[{}]/g, '') || ''
       const matchingField = airtableFields.find(field => 
-        field.name.toLowerCase().includes(placeholder.toLowerCase().replace(/[{}]/g, ''))
+        field?.name?.toLowerCase().includes(cleanPlaceholder)
       )
       
       return {
@@ -95,8 +129,8 @@ const FieldMappingPanel = ({
       }
     })
     
-    onMappingsChange(autoMappings)
-    toast.success('Auto-mapping completed')
+    onMappingsChange?.(autoMappings)
+    toast.success(`Auto-mapping completed: ${autoMappings.length} fields mapped`)
   }
   
   if (loading) {
