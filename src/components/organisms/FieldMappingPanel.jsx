@@ -10,7 +10,6 @@ import Loading from "@/components/ui/Loading";
 import FieldMappingRow from "@/components/molecules/FieldMappingRow";
 import { googleDocsService } from "@/services/api/googleDocsService";
 import airtableService from "@/services/api/airtableService";
-
 export default function FieldMappingPanel({ 
   airtableConfig,
   googleDocUrl, 
