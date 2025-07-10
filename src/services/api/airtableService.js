@@ -1,4 +1,6 @@
 import airtableData from "@/services/mockData/airtableData.json";
+import React from "react";
+import Error from "@/components/ui/Error";
 const airtableService = {
   async getFields(config) {
     try {
@@ -51,7 +53,7 @@ const airtableService = {
       // Simulate API validation
       await new Promise(resolve => setTimeout(resolve, 500))
       
-      return { valid: true, message: 'Connection successful' }
+return { valid: true, message: 'Connection successful' }
     } catch (error) {
       console.error('Airtable validation error:', error)
       throw error
@@ -59,4 +61,5 @@ const airtableService = {
   }
 }
 
+export { airtableService }
 export default airtableService
