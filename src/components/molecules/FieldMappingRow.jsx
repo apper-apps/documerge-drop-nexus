@@ -22,13 +22,14 @@ const FieldMappingRow = ({
     })
   }
   
-  const getFieldTypeIcon = (type) => {
+const getFieldTypeIcon = (type) => {
     switch (type) {
       case 'multipleAttachments':
         return 'Image'
       case 'number':
         return 'Hash'
       case 'date':
+      case 'dateTime':
         return 'Calendar'
       case 'email':
         return 'Mail'
@@ -36,6 +37,28 @@ const FieldMappingRow = ({
         return 'Link'
       case 'multipleRecordLinks':
         return 'Link2'
+      case 'formula':
+        return 'Calculator'
+      case 'lookup':
+        return 'Search'
+      case 'rollup':
+        return 'TrendingUp'
+      case 'count':
+        return 'Hash'
+      case 'rating':
+        return 'Star'
+      case 'checkbox':
+        return 'CheckSquare'
+      case 'multilineText':
+        return 'AlignLeft'
+      case 'multipleSelect':
+        return 'Tags'
+      case 'currency':
+        return 'DollarSign'
+      case 'percent':
+        return 'Percent'
+      case 'phoneNumber':
+        return 'Phone'
       default:
         return 'Type'
     }

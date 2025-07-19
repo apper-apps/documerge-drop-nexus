@@ -96,17 +96,61 @@ const airtableService = {
         return [];
       }
       
-      // Extract field information from the first record
+// Extract field information from the first record
       const sampleRecord = response.records[0];
-      return Object.entries(sampleRecord.fields).map(([fieldName, fieldValue]) => ({
-        id: `fld${Math.random().toString(36).substr(2, 9)}`,
-        name: fieldName,
-        type: typeof fieldValue === 'number' ? 'number' : 
-              Array.isArray(fieldValue) ? 'multipleSelect' : 
-              typeof fieldValue === 'string' && fieldValue.includes('@') ? 'email' :
-              'singleLineText',
-        description: `${typeof fieldValue} field from ${config.tableName}`
-      }));
+      return Object.entries(sampleRecord.fields).map(([fieldName, fieldValue]) => {
+        // Enhanced field type detection
+        let fieldType = 'singleLineText'; // default
+        
+        if (typeof fieldValue === 'number') {
+          fieldType = 'number';
+        } else if (Array.isArray(fieldValue)) {
+          // Check if it's attachments or linked records
+          if (fieldValue.length > 0 && fieldValue[0]?.url) {
+            fieldType = 'multipleAttachments';
+          } else if (fieldValue.length > 0 && typeof fieldValue[0] === 'string') {
+            fieldType = 'multipleSelect';
+          } else {
+            fieldType = 'multipleRecordLinks';
+          }
+        } else if (typeof fieldValue === 'string') {
+          // Enhanced string field type detection
+          if (fieldValue.includes('@') && fieldValue.includes('.')) {
+            fieldType = 'email';
+          } else if (fieldValue.match(/^https?:\/\//)) {
+            fieldType = 'url';
+          } else if (fieldValue.match(/^\d{4}-\d{2}-\d{2}/)) {
+            fieldType = 'date';
+          } else if (fieldValue.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/)) {
+            fieldType = 'dateTime';
+          } else if (fieldValue.length > 100) {
+            fieldType = 'multilineText';
+          }
+        } else if (typeof fieldValue === 'boolean') {
+          fieldType = 'checkbox';
+        }
+        
+        // Handle special Airtable field types that might appear as computed values
+        // These are often returned as strings but represent formula/lookup results
+        if (typeof fieldValue === 'string' && fieldName.toLowerCase().includes('formula')) {
+          fieldType = 'formula';
+        } else if (typeof fieldValue === 'string' && fieldName.toLowerCase().includes('lookup')) {
+          fieldType = 'lookup';
+        } else if (typeof fieldValue === 'number' && fieldName.toLowerCase().includes('count')) {
+          fieldType = 'count';
+        } else if (typeof fieldValue === 'number' && fieldName.toLowerCase().includes('rollup')) {
+          fieldType = 'rollup';
+        } else if (typeof fieldValue === 'number' && fieldName.toLowerCase().includes('rating')) {
+          fieldType = 'rating';
+        }
+        
+        return {
+          id: `fld${Math.random().toString(36).substr(2, 9)}`,
+          name: fieldName,
+          type: fieldType,
+          description: `${fieldType} field from ${config.tableName}`
+        };
+      });
     } catch (error) {
       throw new Error(`Failed to fetch table schema: ${error.message}`);
     }

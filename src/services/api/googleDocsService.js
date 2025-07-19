@@ -163,9 +163,11 @@ const extractPlaceholders = (content) => {
     /\$\{([^}]+)\}/g      // ${placeholder}
   ];
   
-  const placeholders = new Set();
+  const placeholders = new Set(); // Use Set to automatically handle duplicates
   
   for (const pattern of placeholderPatterns) {
+    // Reset regex lastIndex to avoid issues with global regex
+    pattern.lastIndex = 0;
     let match;
     while ((match = pattern.exec(content)) !== null) {
       const placeholder = match[0].trim();
@@ -175,6 +177,7 @@ const extractPlaceholders = (content) => {
     }
   }
   
+  // Convert Set back to Array and sort for consistent ordering
   return Array.from(placeholders).sort();
 };
 
