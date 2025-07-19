@@ -167,17 +167,16 @@ const airtableService = {
         throw new Error(`Table "${config.tableName}" not found. Available tables: ${availableTables}`);
       }
       
-      // Generate a new record ID
+// Generate a new record ID
       const newId = `rec${Math.random().toString(36).substr(2, 15)}`;
       
       return {
         id: newId,
-        fields: record.fields,
+        fields: fields,
         createdTime: new Date().toISOString()
       };
     } catch (error) {
-      console.error('Failed to fetch record:', error);
-      throw new Error(error.message || 'Failed to fetch record from Airtable');
+      throw new Error(`Failed to create record: ${error.message}`);
     }
   }
 };
