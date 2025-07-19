@@ -12,8 +12,7 @@ import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import ApperIcon from "@/components/ApperIcon";
 import { templateService } from "@/services/api/templateService";
-import { airtableService } from "@/services/api/airtableService";
-
+import airtableService from "@/services/api/airtableService";
 const TemplateWizard = () => {
   const navigate = useNavigate()
   const { id } = useParams()
