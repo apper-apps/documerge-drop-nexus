@@ -19,12 +19,9 @@ let templates = templateData.map(template => ({
 }))
 
 export const templateService = {
-  async getAll() {
+async getAll() {
     await new Promise(resolve => setTimeout(resolve, 300))
-    return templates.map(template => ({
-      ...template,
-      airtableConfig: template.airtableConfig ? '***encrypted***' : null
-    }))
+    return [...templates]
   },
 
   async getById(id) {

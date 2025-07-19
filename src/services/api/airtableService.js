@@ -1,53 +1,53 @@
-import airtableData from "@/services/mockData/airtableData.json";
+// Real Airtable API integration
+const AIRTABLE_API_BASE = 'https://api.airtable.com/v0';
 
-// Helper function to find table with flexible matching
-const findTable = (tableName) => {
-  if (!tableName) return null;
+// Helper function to make authenticated requests to Airtable API
+const makeAirtableRequest = async (url, config) => {
+  const headers = {
+    'Authorization': `Bearer ${config.apiKey}`,
+    'Content-Type': 'application/json'
+  };
   
-  // First try exact match
-  let table = airtableData.tables.find(t => t.name === tableName);
+  const response = await fetch(url, { headers });
   
-  // If not found, try case-insensitive partial match
-  if (!table) {
-    const lowerSearchName = tableName.toLowerCase();
-    table = airtableData.tables.find(t => 
-      t.name.toLowerCase().includes(lowerSearchName) || 
-      lowerSearchName.includes(t.name.toLowerCase())
-    );
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error?.message || `Airtable API error: ${response.status}`);
   }
   
-  return table;
+  return response.json();
 };
 
-// Helper function to get available table names for error messages
-const getAvailableTableNames = () => {
-  return airtableData.tables.map(t => t.name).join(', ');
+// Helper function to validate configuration
+const validateConfig = (config) => {
+  if (!config?.apiKey || !config?.baseId) {
+    throw new Error('Missing required Airtable configuration: apiKey and baseId');
+  }
+  
+  if (!config.tableName) {
+    throw new Error('Table name is required');
+  }
 };
-
 const airtableService = {
   // Test Airtable connection
   async testConnection(config) {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      validateConfig(config);
       
-      // Validate configuration
-      if (!config?.apiKey || !config?.baseId || !config?.tableName) {
-        throw new Error('Missing required configuration');
-      }
+      // Make real API call to test connection and get table info
+      const url = `${AIRTABLE_API_BASE}/${config.baseId}/${encodeURIComponent(config.tableName)}?maxRecords=1`;
+      const response = await makeAirtableRequest(url, config);
       
-      const table = findTable(config.tableName);
-      if (!table) {
-        const availableTables = getAvailableTableNames();
-        throw new Error(`Table "${config.tableName}" not found. Available tables: ${availableTables}`);
-      }
+      // Get table schema
+      const schemaUrl = `${AIRTABLE_API_BASE}/${config.baseId}/${encodeURIComponent(config.tableName)}`;
+      const schemaResponse = await makeAirtableRequest(schemaUrl + '?view=Grid%20view', config);
       
       return {
         success: true,
         tableInfo: {
-          name: table.name,
-          recordCount: table.records.length,
-          fieldCount: table.fields.length
+          name: config.tableName,
+          recordCount: response.records?.length || 0,
+          fieldCount: Object.keys(response.records?.[0]?.fields || {}).length
         }
       };
     } catch (error) {
@@ -57,25 +57,25 @@ const airtableService = {
       };
     }
   },
-
-  // Get all records from a table
+// Get all records from a table
   async getRecords(config) {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      validateConfig(config);
       
-      // Validate configuration
-      if (!config?.apiKey || !config?.baseId || !config?.tableName) {
-        throw new Error('Missing required configuration');
-      }
+      // Make real API call to fetch all records
+      const url = `${AIRTABLE_API_BASE}/${config.baseId}/${encodeURIComponent(config.tableName)}`;
+      let allRecords = [];
+      let offset = null;
       
-      const table = findTable(config.tableName);
-      if (!table) {
-        const availableTables = getAvailableTableNames();
-        throw new Error(`Table "${config.tableName}" not found. Available tables: ${availableTables}`);
-      }
+      do {
+        const requestUrl = offset ? `${url}?offset=${offset}` : url;
+        const response = await makeAirtableRequest(requestUrl, config);
+        
+        allRecords = allRecords.concat(response.records || []);
+        offset = response.offset;
+      } while (offset);
       
-      return table.records.map(record => ({
+      return allRecords.map(record => ({
         id: record.id,
         fields: record.fields
       }));
@@ -83,98 +83,69 @@ const airtableService = {
       throw new Error(`Failed to fetch records: ${error.message}`);
     }
   },
-
-  // Get table schema (fields) - returns all tables
+// Get table schema (fields)
   async getFields(config) {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 600));
+      validateConfig(config);
       
-      // If specific table requested, return its fields
-      if (config?.tableName) {
-        const table = findTable(config.tableName);
-        if (!table) {
-          const availableTables = getAvailableTableNames();
-          throw new Error(`Table "${config.tableName}" not found. Available tables: ${availableTables}`);
-        }
-        
-        return table.fields.map(field => ({
-          id: `fld${Math.random().toString(36).substr(2, 9)}`,
-          name: field.name,
-          type: field.type,
-          description: `${field.type} field from ${table.name}`
-        }));
+      // Make real API call to get table schema
+      const url = `${AIRTABLE_API_BASE}/${config.baseId}/${encodeURIComponent(config.tableName)}?maxRecords=1`;
+      const response = await makeAirtableRequest(url, config);
+      
+      if (!response.records || response.records.length === 0) {
+        return [];
       }
       
-      // Return all tables with their fields
-      return airtableData.tables.map(table => ({
-        id: `tbl${Math.random().toString(36).substr(2, 9)}`,
-        name: table.name,
-        description: `Table with ${table.records.length} records`,
-        fields: table.fields.map(field => ({
-          id: `fld${Math.random().toString(36).substr(2, 9)}`,
-          name: field.name,
-          type: field.type
-        }))
+      // Extract field information from the first record
+      const sampleRecord = response.records[0];
+      return Object.entries(sampleRecord.fields).map(([fieldName, fieldValue]) => ({
+        id: `fld${Math.random().toString(36).substr(2, 9)}`,
+        name: fieldName,
+        type: typeof fieldValue === 'number' ? 'number' : 
+              Array.isArray(fieldValue) ? 'multipleSelect' : 
+              typeof fieldValue === 'string' && fieldValue.includes('@') ? 'email' :
+              'singleLineText',
+        description: `${typeof fieldValue} field from ${config.tableName}`
       }));
     } catch (error) {
       throw new Error(`Failed to fetch table schema: ${error.message}`);
     }
   },
-
-  // Get fields for a specific table
+// Get fields for a specific table
   async getTableFields(config) {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Validate configuration
-      if (!config?.apiKey || !config?.baseId || !config?.tableName) {
-        throw new Error('Missing required configuration');
-      }
-      
-      const table = findTable(config.tableName);
-      if (!table) {
-        const availableTables = getAvailableTableNames();
-        throw new Error(`Table "${config.tableName}" not found. Available tables: ${availableTables}`);
-      }
-      
-      return table.fields.map(field => ({
-        id: `fld${Math.random().toString(36).substr(2, 9)}`,
-        name: field.name,
-        type: field.type,
-        description: `${field.type} field`
-      }));
+      // Use the existing getFields method for consistency
+      return await this.getFields(config);
     } catch (error) {
       throw new Error(`Failed to fetch table fields: ${error.message}`);
     }
   },
-
-  // Create a new record
+// Create a new record
   async createRecord(config, fields) {
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1200));
+      validateConfig(config);
       
-      // Validate configuration
-      if (!config?.apiKey || !config?.baseId || !config?.tableName) {
-        throw new Error('Missing required configuration');
-      }
-      
-      const table = findTable(config.tableName);
-      if (!table) {
-        const availableTables = getAvailableTableNames();
-        throw new Error(`Table "${config.tableName}" not found. Available tables: ${availableTables}`);
-      }
-      
-// Generate a new record ID
-      const newId = `rec${Math.random().toString(36).substr(2, 15)}`;
-      
-      return {
-        id: newId,
-        fields: fields,
-        createdTime: new Date().toISOString()
+      // Make real API call to create record
+      const url = `${AIRTABLE_API_BASE}/${config.baseId}/${encodeURIComponent(config.tableName)}`;
+      const requestBody = {
+        fields: fields
       };
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `Failed to create record: ${response.status}`);
+      }
+      
+      return await response.json();
     } catch (error) {
       throw new Error(`Failed to create record: ${error.message}`);
     }
