@@ -56,15 +56,28 @@ const Generate = () => {
     }
   }
   
-  const loadRecords = async (template) => {
+const loadRecords = async (template) => {
     try {
       setLoadingRecords(true)
       setRecordsError('')
+      
+      // Validate airtableService is available
+      if (!airtableService?.getRecords) {
+        throw new Error('Airtable service not available')
+      }
+      
+      // Validate template configuration
+      if (!template?.airtableConfig?.tableName) {
+        throw new Error('Invalid template configuration - missing table name')
+      }
+      
       const data = await airtableService.getRecords(template.airtableConfig)
-      setRecords(data)
+      setRecords(Array.isArray(data) ? data : [])
     } catch (err) {
-      setRecordsError('Failed to load records from Airtable')
+      const errorMessage = err.message || 'Failed to load records from Airtable'
+      setRecordsError(errorMessage)
       console.error('Error loading records:', err)
+      setRecords([])
     } finally {
       setLoadingRecords(false)
     }

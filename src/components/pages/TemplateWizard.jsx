@@ -113,8 +113,12 @@ const handleNext = async () => {
           throw new Error('Airtable service not properly initialized')
         }
         
-        await airtableService.testConnection(templateData.airtableConfig)
-        toast.success('Airtable connection successful')
+        const result = await airtableService.testConnection(templateData.airtableConfig)
+        if (result?.success) {
+          toast.success(`Airtable connection successful - Found ${result.tableInfo?.recordCount || 0} records`)
+        } else {
+          throw new Error('Connection test returned unexpected result')
+        }
       } catch (err) {
         const errorMessage = err.message || 'Failed to connect to Airtable'
         toast.error(`Connection Error: ${errorMessage}`)
