@@ -33,13 +33,17 @@ const Templates = () => {
   const confirmDelete = async () => {
     if (!selectedTemplate) return
     
-    try {
-      await templateService.delete(selectedTemplate.Id)
-      toast.success('Template deleted successfully')
-      setShowDeleteDialog(false)
-      setSelectedTemplate(null)
-      // Refresh the list by forcing a re-render
-      window.location.reload()
+try {
+      const success = await templateService.delete(selectedTemplate.Id)
+      if (success) {
+        toast.success('Template deleted successfully')
+        setShowDeleteDialog(false)
+        setSelectedTemplate(null)
+        // Refresh the list by forcing a re-render
+        window.location.reload()
+      } else {
+        toast.error('Failed to delete template')
+      }
     } catch (error) {
       toast.error('Failed to delete template')
       console.error('Error deleting template:', error)
@@ -105,7 +109,7 @@ const Templates = () => {
             </div>
             
             <p className="text-slate-700 mb-6">
-              Are you sure you want to delete "{selectedTemplate?.name}"? This will permanently remove the template and all its configurations.
+Are you sure you want to delete "{selectedTemplate?.Name || selectedTemplate?.name}"? This will permanently remove the template and all its configurations.
             </p>
             
             <div className="flex items-center justify-end space-x-3">

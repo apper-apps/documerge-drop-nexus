@@ -33,27 +33,27 @@ const Dashboard = () => {
       setLoading(true)
       setError('')
       
-      const [templatesData, generationsData] = await Promise.all([
+const [templatesData, generationsData] = await Promise.all([
         templateService.getAll(),
         generationService.getAll()
       ])
       
-      setTemplates(templatesData.slice(0, 6)) // Show recent 6 templates
-      setRecentGenerations(generationsData.slice(0, 5)) // Show recent 5 generations
+      setTemplates((templatesData || []).slice(0, 6)) // Show recent 6 templates
+      setRecentGenerations((generationsData || []).slice(0, 5)) // Show recent 5 generations
       
       // Calculate stats
-      const thisMonth = generationsData.filter(gen => {
-        const genDate = new Date(gen.createdAt)
+const thisMonth = (generationsData || []).filter(gen => {
+        const genDate = new Date(gen.created_at || gen.createdAt)
         const now = new Date()
         return genDate.getMonth() === now.getMonth() && genDate.getFullYear() === now.getFullYear()
       }).length
       
-      const successfulGenerations = generationsData.filter(gen => gen.status === 'completed').length
-      const successRate = generationsData.length > 0 ? (successfulGenerations / generationsData.length) * 100 : 0
+const successfulGenerations = (generationsData || []).filter(gen => gen.status === 'completed').length
+      const successRate = (generationsData || []).length > 0 ? (successfulGenerations / (generationsData || []).length) * 100 : 0
       
-      setStats({
-        totalTemplates: templatesData.length,
-        totalGenerations: generationsData.length,
+setStats({
+        totalTemplates: (templatesData || []).length,
+        totalGenerations: (generationsData || []).length,
         thisMonth,
         successRate: Math.round(successRate)
       })
@@ -222,7 +222,7 @@ const Dashboard = () => {
                 <div key={template.Id} className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-slate-900">{template.name}</h4>
+<h4 className="font-medium text-slate-900">{template.Name || template.name}</h4>
                       <p className="text-sm text-slate-500">
                         {template.fieldMappings?.length || 0} field mappings
                       </p>
@@ -286,7 +286,7 @@ const Dashboard = () => {
                       PDF Generated
                     </p>
                     <p className="text-xs text-slate-500">
-                      {new Date(generation.createdAt).toLocaleDateString()}
+{new Date(generation.created_at || generation.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="text-right">

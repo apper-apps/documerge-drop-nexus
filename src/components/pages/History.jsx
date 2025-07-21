@@ -2,38 +2,38 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import Button from "@/components/atoms/Button";
+import ApperIcon from "@/components/ApperIcon";
+import Empty from "@/components/ui/Empty";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
 import Card from "@/components/atoms/Card";
 import Badge from "@/components/atoms/Badge";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
-import Empty from "@/components/ui/Empty";
-import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
 import { generationService } from "@/services/api/generationService";
 
 const History = () => {
   const navigate = useNavigate();
-  const [generations, setGenerations] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [filter, setFilter] = useState('all') // all, completed, failed, pending
+  const [generations, setGenerations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [filter, setFilter] = useState('all'); // all, completed, failed, pending
   useEffect(() => {
-    loadGenerations()
-  }, [])
+    loadGenerations();
+  }, []);
   
-  const loadGenerations = async () => {
+const loadGenerations = async () => {
     try {
-      setLoading(true)
-      setError('')
-      const data = await generationService.getAll()
-      setGenerations(data)
+      setLoading(true);
+      setError('');
+      const data = await generationService.getAll();
+      setGenerations(data || []);
     } catch (err) {
-      setError('Failed to load generation history')
-      console.error('Error loading generations:', err)
+      setError('Failed to load generation history');
+      console.error('Error loading generations:', err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
   
   const getStatusColor = (status) => {
     switch (status) {
@@ -61,19 +61,20 @@ const History = () => {
     }
   }
   
-  const filteredGenerations = generations.filter(gen => {
-    if (filter === 'all') return true
-    return gen.status === filter
-  })
+const filteredGenerations = generations.filter(gen => {
+    if (filter === 'all') return true;
+    return gen.status === filter;
+  });
   
   const handleDownload = (generation) => {
-    if (generation.pdfUrl) {
-      const link = document.createElement('a')
-      link.href = generation.pdfUrl
-      link.download = `generated-${generation.Id}.pdf`
-      link.click()
+    const pdfUrl = generation.pdf_url || generation.pdfUrl;
+    if (pdfUrl) {
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = `generated-${generation.Id}.pdf`;
+      link.click();
     }
-  }
+  };
   
   if (loading) {
     return (
@@ -184,22 +185,22 @@ const History = () => {
                     </div>
                     
                     <p className="text-sm text-slate-600 mt-1">
-                      Template: {generation.templateName || 'Unknown'}
+Template: {generation.template_name || generation.templateName || 'Unknown'}
                     </p>
                     
                     <div className="flex items-center space-x-4 mt-2 text-xs text-slate-500">
                       <span>
-                        Generated: {format(new Date(generation.createdAt), 'MMM d, yyyy h:mm a')}
-                      </span>
-                      {generation.recordId && (
-                        <span>Record: {generation.recordId}</span>
+Generated: {format(new Date(generation.created_at || generation.createdAt), 'MMM d, yyyy h:mm a')}
+</span>
+                      {(generation.record_id || generation.recordId) && (
+                        <span>Record: {generation.record_id || generation.recordId}</span>
                       )}
                     </div>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-2">
-                  {generation.status === 'completed' && generation.pdfUrl && (
+{generation.status === 'completed' && (generation.pdf_url || generation.pdfUrl) && (
                     <Button
                       variant="primary"
                       size="sm"

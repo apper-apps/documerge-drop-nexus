@@ -46,8 +46,8 @@ const Generate = () => {
     try {
       setLoading(true)
       setError('')
-      const data = await templateService.getAll()
-      setTemplates(data)
+const data = await templateService.getAll()
+      setTemplates(data || [])
     } catch (err) {
       setError('Failed to load templates')
       console.error('Error loading templates:', err)
@@ -178,13 +178,13 @@ const loadRecords = async (template) => {
           <div>
             <h3 className="text-lg font-semibold text-slate-900 mb-4">Select Template</h3>
             <Select
-              value={selectedTemplate?.Id || ''}
+value={selectedTemplate?.Id || ''}
               onChange={(e) => handleTemplateChange(e.target.value)}
               placeholder="Choose a template"
             >
               {templates.map(template => (
-                <option key={template.Id} value={template.Id}>
-                  {template.name}
+<option key={template.Id} value={template.Id}>
+                  {template.Name || template.name}
                 </option>
               ))}
             </Select>
@@ -193,7 +193,7 @@ const loadRecords = async (template) => {
               <div className="mt-4 p-3 bg-slate-50 rounded-lg">
                 <div className="flex items-center space-x-2 mb-2">
                   <ApperIcon name="FileText" size={16} className="text-slate-600" />
-                  <span className="font-medium text-slate-900">{selectedTemplate.name}</span>
+<span className="font-medium text-slate-900">{selectedTemplate.Name || selectedTemplate.name}</span>
                 </div>
                 <p className="text-sm text-slate-600">
                   {selectedTemplate.fieldMappings?.length || 0} field mappings configured
@@ -270,7 +270,7 @@ const loadRecords = async (template) => {
                   <ApperIcon name="FileText" size={20} className="text-primary-600" />
                 </div>
                 <div>
-                  <h4 className="font-medium text-slate-900">{selectedTemplate.name}</h4>
+<h4 className="font-medium text-slate-900">{selectedTemplate.Name || selectedTemplate.name}</h4>
                   <p className="text-sm text-slate-500">
                     Record: {selectedRecord.fields.Name || selectedRecord.fields.Title || selectedRecord.id}
                   </p>

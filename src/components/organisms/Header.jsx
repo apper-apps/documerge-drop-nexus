@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useLocation } from 'react-router-dom'
 import Button from '@/components/atoms/Button'
 import ApperIcon from '@/components/ApperIcon'
+import { AuthContext } from '@/App'
 
 const Header = ({ onMenuClick }) => {
   const location = useLocation()
@@ -70,7 +71,7 @@ const Header = ({ onMenuClick }) => {
           </div>
         </div>
         
-        <div className="flex items-center space-x-4">
+<div className="flex items-center space-x-4">
           <Button variant="ghost" size="sm">
             <ApperIcon name="Bell" size={20} />
           </Button>
@@ -78,10 +79,26 @@ const Header = ({ onMenuClick }) => {
           <Button variant="ghost" size="sm">
             <ApperIcon name="HelpCircle" size={20} />
           </Button>
+          
+          <LogoutButton />
         </div>
       </div>
     </header>
   )
 }
 
+const LogoutButton = () => {
+  const { logout } = useContext(AuthContext);
+  
+  return (
+    <Button 
+      variant="ghost" 
+      size="sm"
+      onClick={logout}
+      className="text-slate-600 hover:text-slate-900"
+    >
+      <ApperIcon name="LogOut" size={20} />
+    </Button>
+  );
+};
 export default Header
